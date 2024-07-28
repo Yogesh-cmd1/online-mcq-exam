@@ -5,7 +5,7 @@ function submitExam() {
         question3: 'c',
         question4: 'c',
         question5: 'c',
-        question6: 'd'
+        question6: 'c'
     };
 
     let score = 0;
