@@ -25,4 +25,5 @@ function submitExam() {
 
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = `<p>Your score is ${score}/${totalQuestions}.</p>`;
+    console.log(`Final Score: ${score}/${totalQuestions}`);
 }
