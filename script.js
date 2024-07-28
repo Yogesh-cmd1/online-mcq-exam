@@ -13,8 +13,13 @@ function submitExam() {
 
     for (let question in answers) {
         const selectedAnswer = document.querySelector(`input[name="${question}"]:checked`);
-        if (selectedAnswer && selectedAnswer.value === answers[question]) {
-            score++;
+        if (selectedAnswer) {
+            console.log(`Question: ${question}, Selected Answer: ${selectedAnswer.value}`);
+            if (selectedAnswer.value === answers[question]) {
+                score++;
+            }
+        } else {
+            console.log(`Question: ${question}, No Answer Selected`);
         }
     }
 
