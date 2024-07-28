@@ -22,18 +22,20 @@ function submitExam() {
     document.getElementById('resultMessage').textContent = resultMessage;
 
     // Show the popup
-    document.getElementById('resultPopup').classList.remove('hidden');
+    const resultPopup = document.getElementById('resultPopup');
+    resultPopup.style.display = "flex";
 }
 
 // Close the popup when clicking on the close button
 document.getElementById('closePopup').addEventListener('click', () => {
-    document.getElementById('resultPopup').classList.add('hidden');
+    const resultPopup = document.getElementById('resultPopup');
+    resultPopup.style.display = "none";
 });
 
 // Close the popup when clicking outside of the popup content
 window.addEventListener('click', (event) => {
-    const popup = document.getElementById('resultPopup');
-    if (event.target === popup) {
-        popup.classList.add('hidden');
+    const resultPopup = document.getElementById('resultPopup');
+    if (event.target === resultPopup) {
+        resultPopup.style.display = "none";
     }
 });
