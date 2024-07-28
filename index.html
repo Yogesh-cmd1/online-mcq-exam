@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Online MCQ Exam <br> Result will appear end of screen after submit</h1>
+    <h1>Online MCQ Exam</h1>
     <form id="examForm">
         <div class="question">
             <p>1. What is the compression ratio 4 cylinder engine?</p>
@@ -21,7 +21,7 @@
             <label for="q1d">D. 15:1</label>
         </div>
         <div class="question">
-            <p>2. What is injector opening pressure for BS 6?</p>
+            <p>2. What is injector opening pressure?</p>
             <input type="radio" id="q2a" name="question2" value="a">
             <label for="q2a">A. 2200 Bar</label><br>
             <input type="radio" id="q2b" name="question2" value="b">
@@ -73,11 +73,16 @@
             <input type="radio" id="q6c" name="question6" value="c">
             <label for="q6c">C. Sote sote mutna</label><br>
             <input type="radio" id="q6d" name="question6" value="d">
-            <label for="q6d">D. Ask to Faizan Shaikh</label>
+            <label for="q6d">D. Ask to Faizan</label>
         </div>
         <button type="button" onclick="submitExam()">Submit</button>
     </form>
-    <div id="result"></div>
+    <div id="resultPopup" class="hidden">
+        <div id="resultPopupContent">
+            <span id="closePopup">&times;</span>
+            <p id="resultMessage"></p>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
