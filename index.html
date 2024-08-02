@@ -3,86 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online MCQ Exam</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Exam Paper</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Online MCQ Exam</h1>
-    <form id="examForm">
-        <div class="question">
-            <p>1. What is the compression ratio 4 cylinder engine?</p>
-            <input type="radio" id="q1a" name="question1" value="a">
-            <label for="q1a">A. 17:1</label><br>
-            <input type="radio" id="q1b" name="question1" value="b">
-            <label for="q1b">B. 18:1</label><br>
-            <input type="radio" id="q1c" name="question1" value="c">
-            <label for="q1c">C. 16:1</label><br>
-            <input type="radio" id="q1d" name="question1" value="d">
-            <label for="q1d">D. 15:1</label>
-        </div>
-        <div class="question">
-            <p>2. What is injector opening pressure?</p>
-            <input type="radio" id="q2a" name="question2" value="a">
-            <label for="q2a">A. 2200 Bar</label><br>
-            <input type="radio" id="q2b" name="question2" value="b">
-            <label for="q2b">B. 1800 Bar</label><br>
-            <input type="radio" id="q2c" name="question2" value="c">
-            <label for="q2c">C. 1600 Bar</label><br>
-            <input type="radio" id="q2d" name="question2" value="d">
-            <label for="q2d">D. 1400 Bar</label>
-        </div>
-        <div class="question">
-            <p>3. Solenoid valve of Exhaust brake is fitted to?</p>
-            <input type="radio" id="q3a" name="question3" value="a">
-            <label for="q3a">A. Front side of Engine</label><br>
-            <input type="radio" id="q3b" name="question3" value="b">
-            <label for="q3b">B. Left side of Engine</label><br>
-            <input type="radio" id="q3c" name="question3" value="c">
-            <label for="q3c">C. Right side of Engine</label><br>
-            <input type="radio" id="q3d" name="question3" value="d">
-            <label for="q3d">D. Back side of Engine</label>
-        </div>
-        <div class="question">
-            <p>4. What is the bore size of OM926 Engine?</p>
-            <input type="radio" id="q4a" name="question4" value="a">
-            <label for="q4a">A. 132 mm</label><br>
-            <input type="radio" id="q4b" name="question4" value="b">
-            <label for="q4b">B. 134 mm</label><br>
-            <input type="radio" id="q4c" name="question4" value="c">
-            <label for="q4c">C. 136 mm</label><br>
-            <input type="radio" id="q4d" name="question4" value="d">
-            <label for="q4d">D. 138 mm</label>
-        </div>
-        <div class="question">
-            <p>5. What pressure should be required for Urea Dosing Unit working perfectly?</p>
-            <input type="radio" id="q5a" name="question5" value="a">
-            <label for="q5a">A. 8 Bar</label><br>
-            <input type="radio" id="q5b" name="question5" value="b">
-            <label for="q5b">B. 9 Bar</label><br>
-            <input type="radio" id="q5c" name="question5" value="c">
-            <label for="q5c">C. 10 Bar</label><br>
-            <input type="radio" id="q5d" name="question5" value="d">
-            <label for="q5d">D. 12 Bar</label>
-        </div>
-        <div class="question">
-            <p>6.What is responsible for oil retain in Engine Component ?</p>
-            <input type="radio" id="q6a" name="question6" value="a">
-            <label for="q6a">A. NRV Valve</label><br>
-            <input type="radio" id="q6b" name="question6" value="b">
-            <label for="q6b">B.Pressure Switch</label><br>
-            <input type="radio" id="q6c" name="question6" value="c">
-            <label for="q6c">C. PRV Valve</label><br>
-            <input type="radio" id="q6d" name="question6" value="d">
-            <label for="q6d">D.Retaintion Valve</label>
-        </div>
-        <button type="button" onclick="submitExam()">Submit</button>
-    </form>
-    <div id="resultPopup" class="hidden">
-        <div id="resultPopupContent">
-            <span id="closePopup">&times;</span>
-            <p id="resultMessage"></p>
-        </div>
+    <h1>Exam Login</h1>
+    <div id="login">
+        <label for="empCode">Employee Code:</label>
+        <input type="text" id="empCode" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" required><br><br>
+        <button onclick="login()">Login</button>
+        <div id="loginMessage"></div>
     </div>
-    <script src="script.js"></script>
+    <div id="exam" style="display:none;">
+        <h1>Exam Paper</h1>
+        <form id="examForm">
+            <div class="question">
+                <p>1. Grease quantity revised from __ To__?</p>
+                <input type="radio" id="q1a" name="q1" value="A"> <label for="q1a">550g to 450g</label><br>
+                <input type="radio" id="q1b" name="q1" value="B"> <label for="q1b">450g to 230g</label><br>
+                <input type="radio" id="q1c" name="q1" value="C"> <label for="q1c">450g to 250g</label><br>
+                <input type="radio" id="q1d" name="q1" value="D"> <label for="q1d">550g to 230g</label><br>
+            </div>
+            <div>
+                <label for="name">Your Name: </label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <button type="button" onclick="submitExam()">Submit</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const correctPassword = '1234';
+        let loggedInUser = null;
+
+        function login() {
+            const empCode = document.getElementById('empCode').value;
+            const password = document.getElementById('password').value;
+            const loginMessage = document.getElementById('loginMessage');
+
+            if (password === correctPassword) {
+                const attempted = localStorage.getItem(`attempt_${empCode}`);
+                if (attempted) {
+                    loginMessage.textContent = 'You have already attempted the exam.';
+                } else {
+                    loggedInUser = empCode;
+                    document.getElementById('login').style.display = 'none';
+                    document.getElementById('exam').style.display = 'block';
+                }
+            } else {
+                loginMessage.textContent = 'Invalid employee code or password.';
+            }
+        }
+
+        function submitExam() {
+            const form = document.getElementById('examForm');
+            const formData = new FormData(form);
+            const name = formData.get('name');
+            const userAnswer = formData.get('q1');
+            let score = 0;
+
+            const correctAnswers = {
+                q1: 'B'
+            };
+
+            if (userAnswer === correctAnswers.q1) {
+                score++;
+            }
+
+            const isPassed = score === 1;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h2>Results for ${name}</h2><p>${isPassed ? 'Passed' : 'Failed'}</p>`;
+
+            // Store the attempt in localStorage
+            if (loggedInUser) {
+                localStorage.setItem(`attempt_${loggedInUser}`, JSON.stringify({ name, result: isPassed ? 'Passed' : 'Failed' }));
+            }
+        }
+    </script>
 </body>
 </html>
