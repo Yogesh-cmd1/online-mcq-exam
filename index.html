@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Paper</title>
+    <title>Exam Paper with Selfie</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,6 +16,9 @@
             margin-top: 20px;
             font-weight: bold;
         }
+        #camera, #capturedImage {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -27,7 +30,13 @@
         <input type="text" id="empCode" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" required><br><br>
-        <button onclick="login()">Login</button>
+        <div id="cameraSection">
+            <video id="camera" autoplay></video>
+            <canvas id="capturedImage"></canvas>
+            <br>
+            <button id="captureButton">Capture Selfie</button>
+        </div>
+        <button onclick="login()" id="loginButton" disabled>Login</button>
         <div id="loginMessage"></div>
     </div>
     <div id="exam" style="display:none;">
@@ -48,6 +57,37 @@
     <script>
         const correctPassword = '1234';
         let loggedInUser = null;
+        let capturedImageData = null;
+
+        // Camera setup
+        const camera = document.getElementById('camera');
+        const capturedImage = document.getElementById('capturedImage');
+        const captureButton = document.getElementById('captureButton');
+        const loginButton = document.getElementById('loginButton');
+
+        // Get access to the user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                camera.style.display = 'block';
+                camera.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error accessing camera:', error);
+                alert('Camera access is required for login.');
+            });
+
+        // Capture the image from the video stream
+        captureButton.addEventListener('click', () => {
+            const context = capturedImage.getContext('2d');
+            capturedImage.width = camera.videoWidth;
+            capturedImage.height = camera.videoHeight;
+            context.drawImage(camera, 0, 0, camera.videoWidth, camera.videoHeight);
+            capturedImageData = capturedImage.toDataURL('image/png');
+            camera.style.display = 'none';
+            captureButton.style.display = 'none';
+            capturedImage.style.display = 'block';
+            loginButton.disabled = false;
+        });
 
         function login() {
             const name = document.getElementById('name').value;
@@ -60,7 +100,7 @@
                 if (attempted) {
                     loginMessage.textContent = 'You have already attempted the exam.';
                 } else {
-                    loggedInUser = { name, empCode };
+                    loggedInUser = { name, empCode, capturedImageData };
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('exam').style.display = 'block';
                 }
@@ -85,10 +125,19 @@
 
             const isPassed = score === 1;
             const resultMessage = `Results for ${loggedInUser.name}: ${isPassed ? 'Passed' : 'Failed'}`;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h2>${resultMessage}</h2>`;
+            if (loggedInUser.capturedImageData) {
+                resultDiv.innerHTML += `<p><img src="${loggedInUser.capturedImageData}" alt="User Selfie" width="200"></p>`;
+            }
 
             // Store the attempt in localStorage
             if (loggedInUser) {
-                localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({ name: loggedInUser.name, result: isPassed ? 'Passed' : 'Failed' }));
+                localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
+                    name: loggedInUser.name,
+                    result: isPassed ? 'Passed' : 'Failed',
+                    capturedImageData: loggedInUser.capturedImageData
+                }));
             }
 
             // Send WhatsApp message
