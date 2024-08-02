@@ -16,10 +16,10 @@
             margin-top: 20px;
             font-weight: bold;
         }
-        #camera, #capturedImage {
+        #camera, #capturedImageCanvas {
             display: none;
         }
-        #capturedImage {
+        #capturedImageCanvas {
             border-radius: 50%;
             width: 150px;
             height: 150px;
@@ -27,6 +27,9 @@
         }
         #resultDetails {
             text-align: center;
+        }
+        #resultImage {
+            display: none;
         }
     </style>
 </head>
@@ -62,6 +65,7 @@
         </form>
         <div id="result" class="result"></div>
     </div>
+    <canvas id="resultImage"></canvas>
 
     <script>
         const correctPassword = '1234';
@@ -73,6 +77,7 @@
         const capturedImageCanvas = document.getElementById('capturedImageCanvas');
         const captureButton = document.getElementById('captureButton');
         const loginButton = document.getElementById('loginButton');
+        const resultImageCanvas = document.getElementById('resultImage');
 
         // Get access to the user's camera
         navigator.mediaDevices.getUserMedia({ video: true })
@@ -135,7 +140,7 @@
             const isPassed = score === 1;
             const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Winner' : 'Loser'}`;
             const resultDiv = document.getElementById('result');
-            
+
             resultDiv.innerHTML = `
                 <div id="resultDetails">
                     <h2>${isPassed ? 'Winner' : 'Loser'}</h2>
@@ -155,8 +160,34 @@
                 }));
             }
 
-            // Send WhatsApp message
-            const whatsappMessage = encodeURIComponent(resultMessage);
+            // Draw the result image with the selfie and tag
+            const resultImageContext = resultImageCanvas.getContext('2d');
+            const image = new Image();
+            image.src = loggedInUser.capturedImageData;
+            image.onload = function() {
+                resultImageCanvas.width = 200;
+                resultImageCanvas.height = 240;
+                resultImageContext.drawImage(image, 0, 0, 200, 200);
+
+                // Draw the "Winner" or "Loser" text
+                resultImageContext.font = '20px Arial';
+                resultImageContext.textAlign = 'center';
+                resultImageContext.fillStyle = isPassed ? 'green' : 'red';
+                resultImageContext.fillText(isPassed ? 'Winner' : 'Loser', 100, 220);
+
+                const resultImageData = resultImageCanvas.toDataURL('image/png');
+
+                // Send WhatsApp message with image data
+                sendWhatsAppMessage(resultMessage, resultImageData);
+            };
+        }
+
+        function sendWhatsAppMessage(message, imageData) {
+            // Unfortunately, WhatsApp does not allow sending images directly from a URL scheme.
+            // Instead, you would need to implement a server to handle file uploads or use the WhatsApp API.
+            // For simplicity, we provide a link with text only, and users can manually attach the image.
+
+            const whatsappMessage = encodeURIComponent(message);
             const whatsappLink = `https://wa.me/?text=${whatsappMessage}`;
             window.location.href = whatsappLink;
         }
