@@ -87,12 +87,12 @@
             }
 
             const isPassed = score === 1;
-            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Winner' : 'Loser'}`;
+            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Passed' : 'Failed'}`;
             const resultDiv = document.getElementById('result');
 
             resultDiv.innerHTML = `
                 <div id="resultDetails">
-                    <h2>${isPassed ? 'Winner' : 'Loser'}</h2>
+                    <h2>${isPassed ? 'Passed' : 'Failed'}</h2>
                     <p>${loggedInUser.name} (${loggedInUser.empCode})</p>
                 </div>
                 <h2>${resultMessage}</h2>
