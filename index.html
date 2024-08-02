@@ -19,6 +19,15 @@
         #camera, #capturedImage {
             display: none;
         }
+        #capturedImage {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+        #resultDetails {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -32,7 +41,7 @@
         <input type="password" id="password" required><br><br>
         <div id="cameraSection">
             <video id="camera" autoplay></video>
-            <canvas id="capturedImage"></canvas>
+            <canvas id="capturedImageCanvas"></canvas>
             <br>
             <button id="captureButton">Capture Selfie</button>
         </div>
@@ -61,7 +70,7 @@
 
         // Camera setup
         const camera = document.getElementById('camera');
-        const capturedImage = document.getElementById('capturedImage');
+        const capturedImageCanvas = document.getElementById('capturedImageCanvas');
         const captureButton = document.getElementById('captureButton');
         const loginButton = document.getElementById('loginButton');
 
@@ -78,14 +87,14 @@
 
         // Capture the image from the video stream
         captureButton.addEventListener('click', () => {
-            const context = capturedImage.getContext('2d');
-            capturedImage.width = camera.videoWidth;
-            capturedImage.height = camera.videoHeight;
+            const context = capturedImageCanvas.getContext('2d');
+            capturedImageCanvas.width = camera.videoWidth;
+            capturedImageCanvas.height = camera.videoHeight;
             context.drawImage(camera, 0, 0, camera.videoWidth, camera.videoHeight);
-            capturedImageData = capturedImage.toDataURL('image/png');
+            capturedImageData = capturedImageCanvas.toDataURL('image/png');
             camera.style.display = 'none';
             captureButton.style.display = 'none';
-            capturedImage.style.display = 'block';
+            capturedImageCanvas.style.display = 'block';
             loginButton.disabled = false;
         });
 
@@ -124,17 +133,23 @@
             }
 
             const isPassed = score === 1;
-            const resultMessage = `Results for ${loggedInUser.name}: ${isPassed ? 'Passed' : 'Failed'}`;
+            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Winner' : 'Loser'}`;
             const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<h2>${resultMessage}</h2>`;
-            if (loggedInUser.capturedImageData) {
-                resultDiv.innerHTML += `<p><img src="${loggedInUser.capturedImageData}" alt="User Selfie" width="200"></p>`;
-            }
+            
+            resultDiv.innerHTML = `
+                <div id="resultDetails">
+                    <h2>${isPassed ? 'Winner' : 'Loser'}</h2>
+                    <p>${loggedInUser.name} (${loggedInUser.empCode})</p>
+                    <img id="capturedImage" src="${loggedInUser.capturedImageData}" alt="User Selfie">
+                </div>
+                <h2>${resultMessage}</h2>
+            `;
 
             // Store the attempt in localStorage
             if (loggedInUser) {
                 localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
                     name: loggedInUser.name,
+                    empCode: loggedInUser.empCode,
                     result: isPassed ? 'Passed' : 'Failed',
                     capturedImageData: loggedInUser.capturedImageData
                 }));
