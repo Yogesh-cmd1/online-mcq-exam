@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Paper with Selfie</title>
+    <title>Exam Paper</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,20 +16,8 @@
             margin-top: 20px;
             font-weight: bold;
         }
-        #camera, #capturedImageCanvas {
-            display: none;
-        }
-        #capturedImageCanvas {
-            border-radius: 50%;
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
         #resultDetails {
             text-align: center;
-        }
-        #resultImage {
-            display: none;
         }
     </style>
 </head>
@@ -42,13 +30,7 @@
         <input type="text" id="empCode" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" required><br><br>
-        <div id="cameraSection">
-            <video id="camera" autoplay></video>
-            <canvas id="capturedImageCanvas"></canvas>
-            <br>
-            <button id="captureButton">Capture Selfie</button>
-        </div>
-        <button onclick="login()" id="loginButton" disabled>Login</button>
+        <button onclick="login()" id="loginButton">Login</button>
         <div id="loginMessage"></div>
     </div>
     <div id="exam" style="display:none;">
@@ -65,43 +47,10 @@
         </form>
         <div id="result" class="result"></div>
     </div>
-    <canvas id="resultImage"></canvas>
 
     <script>
         const correctPassword = '1234';
         let loggedInUser = null;
-        let capturedImageData = null;
-
-        // Camera setup
-        const camera = document.getElementById('camera');
-        const capturedImageCanvas = document.getElementById('capturedImageCanvas');
-        const captureButton = document.getElementById('captureButton');
-        const loginButton = document.getElementById('loginButton');
-        const resultImageCanvas = document.getElementById('resultImage');
-
-        // Get access to the user's camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                camera.style.display = 'block';
-                camera.srcObject = stream;
-            })
-            .catch(error => {
-                console.error('Error accessing camera:', error);
-                alert('Camera access is required for login.');
-            });
-
-        // Capture the image from the video stream
-        captureButton.addEventListener('click', () => {
-            const context = capturedImageCanvas.getContext('2d');
-            capturedImageCanvas.width = camera.videoWidth;
-            capturedImageCanvas.height = camera.videoHeight;
-            context.drawImage(camera, 0, 0, camera.videoWidth, camera.videoHeight);
-            capturedImageData = capturedImageCanvas.toDataURL('image/png');
-            camera.style.display = 'none';
-            captureButton.style.display = 'none';
-            capturedImageCanvas.style.display = 'block';
-            loginButton.disabled = false;
-        });
 
         function login() {
             const name = document.getElementById('name').value;
@@ -114,7 +63,7 @@
                 if (attempted) {
                     loginMessage.textContent = 'You have already attempted the exam.';
                 } else {
-                    loggedInUser = { name, empCode, capturedImageData };
+                    loggedInUser = { name, empCode };
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('exam').style.display = 'block';
                 }
@@ -145,7 +94,6 @@
                 <div id="resultDetails">
                     <h2>${isPassed ? 'Winner' : 'Loser'}</h2>
                     <p>${loggedInUser.name} (${loggedInUser.empCode})</p>
-                    <img id="capturedImage" src="${loggedInUser.capturedImageData}" alt="User Selfie">
                 </div>
                 <h2>${resultMessage}</h2>
             `;
@@ -155,38 +103,15 @@
                 localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
                     name: loggedInUser.name,
                     empCode: loggedInUser.empCode,
-                    result: isPassed ? 'Passed' : 'Failed',
-                    capturedImageData: loggedInUser.capturedImageData
+                    result: isPassed ? 'Passed' : 'Failed'
                 }));
             }
 
-            // Draw the result image with the selfie and tag
-            const resultImageContext = resultImageCanvas.getContext('2d');
-            const image = new Image();
-            image.src = loggedInUser.capturedImageData;
-            image.onload = function() {
-                resultImageCanvas.width = 200;
-                resultImageCanvas.height = 240;
-                resultImageContext.drawImage(image, 0, 0, 200, 200);
-
-                // Draw the "Winner" or "Loser" text
-                resultImageContext.font = '20px Arial';
-                resultImageContext.textAlign = 'center';
-                resultImageContext.fillStyle = isPassed ? 'green' : 'red';
-                resultImageContext.fillText(isPassed ? 'Winner' : 'Loser', 100, 220);
-
-                const resultImageData = resultImageCanvas.toDataURL('image/png');
-
-                // Send WhatsApp message with image data
-                sendWhatsAppMessage(resultMessage, resultImageData);
-            };
+            // Send WhatsApp message
+            sendWhatsAppMessage(resultMessage);
         }
 
-        function sendWhatsAppMessage(message, imageData) {
-            // Unfortunately, WhatsApp does not allow sending images directly from a URL scheme.
-            // Instead, you would need to implement a server to handle file uploads or use the WhatsApp API.
-            // For simplicity, we provide a link with text only, and users can manually attach the image.
-
+        function sendWhatsAppMessage(message) {
             const whatsappMessage = encodeURIComponent(message);
             const whatsappLink = `https://wa.me/?text=${whatsappMessage}`;
             window.location.href = whatsappLink;
