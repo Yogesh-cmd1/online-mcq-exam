@@ -21,6 +21,8 @@
 <body>
     <h1>Exam Login</h1>
     <div id="login">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
         <label for="empCode">Employee Code:</label>
         <input type="text" id="empCode" required><br><br>
         <label for="password">Password:</label>
@@ -38,10 +40,6 @@
                 <input type="radio" id="q1c" name="q1" value="C"> <label for="q1c">450g to 250g</label><br>
                 <input type="radio" id="q1d" name="q1" value="D"> <label for="q1d">550g to 230g</label><br>
             </div>
-            <div>
-                <label for="name">Your Name: </label>
-                <input type="text" id="name" name="name" required>
-            </div>
             <button type="button" onclick="submitExam()">Submit</button>
         </form>
         <div id="result" class="result"></div>
@@ -52,6 +50,7 @@
         let loggedInUser = null;
 
         function login() {
+            const name = document.getElementById('name').value;
             const empCode = document.getElementById('empCode').value;
             const password = document.getElementById('password').value;
             const loginMessage = document.getElementById('loginMessage');
@@ -61,7 +60,7 @@
                 if (attempted) {
                     loginMessage.textContent = 'You have already attempted the exam.';
                 } else {
-                    loggedInUser = empCode;
+                    loggedInUser = { name, empCode };
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('exam').style.display = 'block';
                 }
@@ -73,7 +72,6 @@
         function submitExam() {
             const form = document.getElementById('examForm');
             const formData = new FormData(form);
-            const name = formData.get('name');
             const userAnswer = formData.get('q1');
             let score = 0;
 
@@ -86,13 +84,17 @@
             }
 
             const isPassed = score === 1;
-            const resultDiv = document.getElementById('result');
-            resultDiv.innerHTML = `<h2>Results for ${name}</h2><p>${isPassed ? 'Passed' : 'Failed'}</p>`;
+            const resultMessage = `Results for ${loggedInUser.name}: ${isPassed ? 'Passed' : 'Failed'}`;
 
             // Store the attempt in localStorage
             if (loggedInUser) {
-                localStorage.setItem(`attempt_${loggedInUser}`, JSON.stringify({ name, result: isPassed ? 'Passed' : 'Failed' }));
+                localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({ name: loggedInUser.name, result: isPassed ? 'Passed' : 'Failed' }));
             }
+
+            // Send WhatsApp message
+            const whatsappMessage = encodeURIComponent(resultMessage);
+            const whatsappLink = `https://wa.me/?text=${whatsappMessage}`;
+            window.location.href = whatsappLink;
         }
     </script>
 </body>
