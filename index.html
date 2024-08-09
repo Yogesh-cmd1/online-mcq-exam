@@ -37,11 +37,25 @@
         <h1>Exam Paper</h1>
         <form id="examForm">
             <div class="question">
-                <p>1. Grease quantity revised from __ To__?</p>
-                <input type="radio" id="q1a" name="q1" value="A"> <label for="q1a">550g to 450g</label><br>
-                <input type="radio" id="q1b" name="q1" value="B"> <label for="q1b">450g to 230g</label><br>
-                <input type="radio" id="q1c" name="q1" value="C"> <label for="q1c">450g to 250g</label><br>
-                <input type="radio" id="q1d" name="q1" value="D"> <label for="q1d">550g to 230g</label><br>
+                <p>1. When operating one of the low range gears, the shift unit allows pressurized air to flow through which port in G131?</p>
+                <input type="radio" id="q1a" name="q1" value="22"> <label for="q1a">22</label><br>
+                <input type="radio" id="q1b" name="q1" value="44"> <label for="q1b">44</label><br>
+                <input type="radio" id="q1c" name="q1" value="42"> <label for="q1c">42</label><br>
+                <input type="radio" id="q1d" name="q1" value="21"> <label for="q1d">21</label><br>
+            </div>
+            <div class="question">
+                <p>2. When operating one of the high range gears, the shift unit allows pressurized air to flow through which port in G131?</p>
+                <input type="radio" id="q2a" name="q2" value="22"> <label for="q2a">22</label><br>
+                <input type="radio" id="q2b" name="q2" value="44"> <label for="q2b">44</label><br>
+                <input type="radio" id="q2c" name="q2" value="42"> <label for="q2c">42</label><br>
+                <input type="radio" id="q2d" name="q2" value="45"> <label for="q2d">45</label><br>
+            </div>
+            <div class="question">
+                <p>3. IUPR data collection is allowed in trucks and buses of?</p>
+                <input type="radio" id="q3a" name="q3" value="OBD I"> <label for="q3a">OBD I</label><br>
+                <input type="radio" id="q3b" name="q3" value="OBD II"> <label for="q3b">OBD II</label><br>
+                <input type="radio" id="q3c" name="q3" value="OBD III"> <label for="q3c">OBD III</label><br>
+                <input type="radio" id="q3d" name="q3" value="OBD IV"> <label for="q3d">OBD IV</label><br>
             </div>
             <button type="button" onclick="submitExam()">Submit</button>
         </form>
@@ -75,18 +89,19 @@
         function submitExam() {
             const form = document.getElementById('examForm');
             const formData = new FormData(form);
-            const userAnswer = formData.get('q1');
             let score = 0;
 
             const correctAnswers = {
-                q1: 'B'
+                q1: '44',
+                q2: '45',
+                q3: 'OBD II'
             };
 
-            if (userAnswer === correctAnswers.q1) {
-                score++;
-            }
+            if (formData.get('q1') === correctAnswers.q1) score++;
+            if (formData.get('q2') === correctAnswers.q2) score++;
+            if (formData.get('q3') === correctAnswers.q3) score++;
 
-            const isPassed = score === 1;
+            const isPassed = score === 3;
             const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Passed' : 'Failed'}`;
             const resultDiv = document.getElementById('result');
 
@@ -98,7 +113,6 @@
                 <h2>${resultMessage}</h2>
             `;
 
-            // Store the attempt in localStorage
             if (loggedInUser) {
                 localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
                     name: loggedInUser.name,
@@ -107,7 +121,6 @@
                 }));
             }
 
-            // Send WhatsApp message
             sendWhatsAppMessage(resultMessage);
         }
 
