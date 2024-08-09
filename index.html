@@ -26,8 +26,6 @@
     <div id="login">
         <label for="name">Name:</label>
         <input type="text" id="name" required><br><br>
-        <label for="empCode">Employee Code:</label>
-        <input type="text" id="empCode" required><br><br>
         <label for="password">Password:</label>
         <input type="password" id="password" required><br><br>
         <button onclick="login()" id="loginButton">Login</button>
@@ -68,21 +66,20 @@
 
         function login() {
             const name = document.getElementById('name').value;
-            const empCode = document.getElementById('empCode').value;
             const password = document.getElementById('password').value;
             const loginMessage = document.getElementById('loginMessage');
 
             if (password === correctPassword) {
-                const attempted = localStorage.getItem(`attempt_${empCode}`);
+                const attempted = localStorage.getItem(`attempt_${name}`);
                 if (attempted) {
                     loginMessage.textContent = 'You have already attempted the exam.';
                 } else {
-                    loggedInUser = { name, empCode };
+                    loggedInUser = { name };
                     document.getElementById('login').style.display = 'none';
                     document.getElementById('exam').style.display = 'block';
                 }
             } else {
-                loginMessage.textContent = 'Invalid employee code or password.';
+                loginMessage.textContent = 'Invalid name or password.';
             }
         }
 
@@ -129,22 +126,21 @@
             }
 
             const isPassed = score >= 10;
-            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Passed' : 'Failed'}. Total Score: ${score}/15`;
+            const resultMessage = `Results for ${loggedInUser.name}: ${isPassed ? 'Passed' : 'Failed'}. Total Score: ${score}/15`;
             const resultDiv = document.getElementById('result');
 
             resultDiv.innerHTML = `
                 <div id="resultDetails">
                     <h2>${isPassed ? 'Passed' : 'Failed'}</h2>
-                    <p>${loggedInUser.name} (${loggedInUser.empCode})</p>
+                    <p>${loggedInUser.name}</p>
                     ${resultDetails}
                 </div>
                 <h2>${resultMessage}</h2>
             `;
 
             if (loggedInUser) {
-                localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
+                localStorage.setItem(`attempt_${loggedInUser.name}`, JSON.stringify({
                     name: loggedInUser.name,
-                    empCode: loggedInUser.empCode,
                     score: score,
                     result: isPassed ? 'Passed' : 'Failed'
                 }));
