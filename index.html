@@ -90,6 +90,7 @@
             const form = document.getElementById('examForm');
             const formData = new FormData(form);
             let score = 0;
+            let resultDetails = '';
 
             const correctAnswers = {
                 q1: '44',
@@ -97,18 +98,45 @@
                 q3: 'OBD II'
             };
 
-            if (formData.get('q1') === correctAnswers.q1) score++;
-            if (formData.get('q2') === correctAnswers.q2) score++;
-            if (formData.get('q3') === correctAnswers.q3) score++;
+            // Question 1
+            const answer1 = formData.get('q1');
+            if (answer1 === correctAnswers.q1) {
+                score += 5;
+                resultDetails += `<p>Q1: Correct (5/5)</p>`;
+            } else {
+                resultDetails += `<p>Q1: Incorrect. Correct answer: ${correctAnswers.q1} (0/5)</p>`;
+            }
 
-            const isPassed = score === 3;
-            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Passed' : 'Failed'}`;
+            // Question 2
+            const answer2 = formData.get('q2');
+            if (answer2 === correctAnswers.q2) {
+                score += 5;
+                resultDetails += `<p>Q2: Correct (5/5)</p>`;
+            } else {
+                resultDetails += `<p>Q2: Incorrect. Correct answer: ${correctAnswers.q2} (0/5)</p>`;
+            }
+
+            // Question 3
+            const answer3 = formData.get('q3');
+            if (answer3 === correctAnswers.q3) {
+                score += 5;
+                resultDetails += `<p>Q3: Correct (5/5)</p>`;
+            } else {
+                resultDetails += `<p>Q3: Incorrect. Correct answer: ${correctAnswers.q3} (0/5)</p>`;
+                if (answer3 === 'OBD III' || answer3 === 'OBD IV') {
+                    resultDetails += `<p style="color:red;">Main gadha hu!</p>`;
+                }
+            }
+
+            const isPassed = score >= 10;
+            const resultMessage = `Results for ${loggedInUser.name} (${loggedInUser.empCode}): ${isPassed ? 'Passed' : 'Failed'}. Total Score: ${score}/15`;
             const resultDiv = document.getElementById('result');
 
             resultDiv.innerHTML = `
                 <div id="resultDetails">
                     <h2>${isPassed ? 'Passed' : 'Failed'}</h2>
                     <p>${loggedInUser.name} (${loggedInUser.empCode})</p>
+                    ${resultDetails}
                 </div>
                 <h2>${resultMessage}</h2>
             `;
@@ -117,6 +145,7 @@
                 localStorage.setItem(`attempt_${loggedInUser.empCode}`, JSON.stringify({
                     name: loggedInUser.name,
                     empCode: loggedInUser.empCode,
+                    score: score,
                     result: isPassed ? 'Passed' : 'Failed'
                 }));
             }
